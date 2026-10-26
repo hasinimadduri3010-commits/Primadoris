@@ -18,4 +18,8 @@ BASELINE_PATH = MODELS_DIR / "baseline.json"  # canary inputs + expected embeddi
 DEMO_SAMPLES_PATH = MODELS_DIR / "demo_samples.json"
 
 CANARY_INTERVAL_SEC = 3
+<<<<<<< HEAD
 CANARY_DRIFT_THRESHOLD = 0.10  # 10% relative drift => quarantine
+=======
+CANARY_DRIFT_THRESHOLD = 0.10  # 10% relative drift => quarantine
+>>>>>>> origin/main
