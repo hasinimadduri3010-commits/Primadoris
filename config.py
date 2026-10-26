@@ -19,6 +19,7 @@ DEMO_SAMPLES_PATH = MODELS_DIR / "demo_samples.json"
 
 CANARY_INTERVAL_SEC = 3
 CANARY_DRIFT_THRESHOLD = 0.10  # 10% relative drift => quarantine
+<<<<<<< HEAD
 """
 config.py
 =========
@@ -56,3 +57,5 @@ DEMO_SAMPLES_JSON_PATH = os.path.join(MODELS_DIR, "demo_samples.json")
 # Canary & Drift Detection Defaults
 DEFAULT_DRIFT_THRESHOLD = 0.05
 DEFAULT_CANARY_INTERVAL = 2.0
+=======
+>>>>>>> 09af56f294fc0dfed26f0cf54bd07433192ba04d

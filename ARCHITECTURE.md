@@ -63,6 +63,8 @@ POST /attack/reset    restore file, reload, state=OFFLINE, call cloud /reset
 ## States
 Edge: OFFLINE, ATTESTING, RUNNING, QUARANTINED, LOCKED_DOWN
 Cloud node status: UNKNOWN, TRUSTED, QUARANTINED, REJECTED
+
+
 # SentinelEdge AI — Architecture Contract
 RULE FOR ALL AI ASSISTANTS: read this first. Never rename files, functions, endpoints,
 JSON fields or states below. Only edit the files you were told to edit. Keep code simple:
