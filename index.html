@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PRIMADORIS — AI Integrity Containment System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/styles.css?v=4" />
+</head>
+<body>
+<canvas id="space-canvas" aria-hidden="true"></canvas>
+<div class="space-tint" aria-hidden="true"></div>
+
+<!-- shared svg gradients -->
+<svg class="svg-defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="grad-brain" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#bcd4ff" />
+      <stop offset="55%" stop-color="#8ea8ff" />
+      <stop offset="100%" stop-color="#7b6bff" />
+    </linearGradient>
+    <linearGradient id="grad-shield" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d8dfff" />
+      <stop offset="60%" stop-color="#a9b6f0" />
+      <stop offset="100%" stop-color="#7f8ecb" />
+    </linearGradient>
+    <linearGradient id="grad-warn" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f2f5ff" />
+      <stop offset="100%" stop-color="#9fb0e8" />
+    </linearGradient>
+    <linearGradient id="grad-star" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#8f9dff" />
+    </linearGradient>
+    <radialGradient id="grad-jelly" cx="35%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#e6e2ff" stop-opacity="0.95" />
+      <stop offset="35%" stop-color="#8d7bff" stop-opacity="0.75" />
+      <stop offset="72%" stop-color="#3b2d8f" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="#100a33" stop-opacity="0.1" />
+    </radialGradient>
+    <radialGradient id="grad-haze" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#8f7bff" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="#8f7bff" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+</svg>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-orb" aria-hidden="true"><i></i></span>
+      <span class="brand-copy">
+        <span class="brand-name">PRIMADORIS</span>
+        <span class="brand-tag">AI INTEGRITY / <em>v1.0</em></span>
+      </span>
+    </div>
+
+    <div class="title-block">
+      <svg class="ornament" viewBox="0 0 320 30" aria-hidden="true" focusable="false">
+        <path d="M160 3 L163.2 13.8 L174 17 L163.2 20.2 L160 31 L156.8 20.2 L146 17 L156.8 13.8 Z" fill="url(#grad-star)" />
+        <path d="M96 17 H142" stroke="rgba(160,175,255,0.35)" stroke-width="1" stroke-dasharray="2 5" />
+        <path d="M178 17 H224" stroke="rgba(160,175,255,0.35)" stroke-width="1" stroke-dasharray="2 5" />
+        <circle cx="160" cy="17" r="15" fill="none" stroke="rgba(150,165,255,0.16)" stroke-width="1" />
+      </svg>
+      <h1 class="title">PRIMADORIS</h1>
+      <p class="title-sub">AI INTEGRITY CONTAINMENT SYSTEM</p>
+      <p class="mantra">
+        <span>OBSERVE</span><i>+</i><span>DETECT</span><b>/</b><span>CONTAIN</span><i>+</i><span>PRESERVE</span>
+      </p>
+    </div>
+
+    <div class="clock-box">
+      <div class="clock-label">LOCALHOST</div>
+      <div class="clock-time" id="clock">21:47:32</div>
+      <div class="clock-uptime">UPTIME: <span id="uptime">00:12:46</span></div>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <nav class="nav" aria-label="Primary">
+      <button class="nav-item is-active" data-view="THE ABYSS" type="button">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="9.2" opacity=".55" />
+            <path d="M16.6 7.4c-2.2-2.2-6.4-1.1-7.5 1.8-1.2 3.1 1.6 6 4.5 5 2.2-.8 2.2-3.6.2-4-1.6-.3-2.6 1.1-2 2.2" />
+            <path d="M4.4 9.6c2 .5 3.6 1.6 4.6 3" opacity=".5" />
+            <path d="M19.6 14.4c-2-.5-3.6-1.6-4.6-3" opacity=".5" />
+          </svg>
+        </span>
+        <span class="nav-labels">
+          <span class="nav-title">THE ABYSS</span>
+          <span class="nav-sub">Live Overview</span>
+        </span>
+      </button>
+
+      <button class="nav-item" data-view="THREAT LAB" type="button">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3.6 21 20H3z" />
+            <path d="M12 9.6v4.6" />
+            <circle cx="12" cy="17.2" r=".85" fill="currentColor" stroke="none" />
+          </svg>
+        </span>
+        <span class="nav-labels">
+          <span class="nav-title">THREAT LAB</span>
+          <span class="nav-sub">Run Scenarios</span>
+        </span>
+      </button>
+
+      <button class="nav-item" data-view="OBSERVATORY" type="button">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4.2 13.4 15 7.4l2.6 4.6L6.8 18z" />
+            <path d="M17.6 12 20.4 10.6" />
+            <path d="M11.3 16.5 9.6 21" />
+            <path d="M11.3 16.5 15.6 21" opacity=".6" />
+            <circle cx="18.6" cy="6.6" r="1.5" opacity=".7" />
+          </svg>
+        </span>
+        <span class="nav-labels">
+          <span class="nav-title">OBSERVATORY</span>
+          <span class="nav-sub">Model Analysis</span>
+        </span>
+      </button>
+
+      <button class="nav-item" data-view="BLACK BOX" type="button">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3.2 20.2 7.6v8.8L12 20.8 3.8 16.4V7.6z" />
+            <path d="M3.8 7.6 12 12l8.2-4.4" opacity=".7" />
+            <path d="M12 12v8.8" opacity=".7" />
+          </svg>
+        </span>
+        <span class="nav-labels">
+          <span class="nav-title">BLACK BOX</span>
+          <span class="nav-sub">Event Logs</span>
+        </span>
+      </button>
+    </nav>
+
+    <blockquote class="quote">“Not all intelligence<br />is safe.<br />That’s why we watch.”</blockquote>
+  </aside>
+
+  <main class="main">
+
+    <!-- ══ PANEL 0: THE ABYSS ══════════════════════════════ -->
+    <div class="view-panel" data-panel="THE ABYSS">
+      <div class="stage">
+        <section class="frame" aria-label="Integrity dashboard">
+          <!-- ── stat row ───────────────────────────────────────── -->
+          <div class="stat-row">
+            <article class="card stat-card" data-tone="model">
+              <span class="stat-label">MODEL STATE</span>
+              <div class="stat-value" id="model-state">HEALTHY</div>
+              <div class="stat-meta" id="model-meta">No anomalies detected</div>
+              <span class="stat-icon" aria-hidden="true">
+                <svg viewBox="0 0 64 64" fill="none" stroke="url(#grad-brain)" stroke-width="0.9" stroke-linecap="round">
+                  <circle cx="32" cy="32" r="20" opacity=".22" stroke-dasharray="2 4" />
+                  <circle cx="32" cy="32" r="14" opacity=".16" />
+                  <g opacity=".95">
+                    <path d="M32 12c-6 2.5-9.5 6.5-9.5 11 0 3 1.6 5 1.6 8 0 3.6-3 5-3 9 0 3 2.2 5.6 5.4 6.6" />
+                    <path d="M32 12c6 2.5 9.5 6.5 9.5 11 0 3-1.6 5-1.6 8 0 3.6 3 5 3 9 0 3-2.2 5.6-5.4 6.6" />
+                    <path d="M32 12v40" opacity=".7" />
+                    <path d="M23.6 22.4c3 1.4 5.4 3.8 6.4 7M40.4 22.4c-3 1.4-5.4 3.8-6.4 7" opacity=".8" />
+                    <path d="M23.2 35.6c3.2.6 6 2.6 7.4 5.6M40.8 35.6c-3.2.6-6 2.6-7.4 5.6" opacity=".8" />
+                  </g>
+                  <g fill="#c9d8ff" stroke="none">
+                    <circle cx="32" cy="12" r="1.5" /><circle cx="22.4" cy="23" r="1.2" />
+                    <circle cx="41.6" cy="23" r="1.2" /><circle cx="32" cy="32" r="1.4" />
+                  </g>
+                </svg>
+              </span>
+            </article>
+
+            <article class="card stat-card" data-tone="variance">
+              <span class="stat-label">VARIANCE</span>
+              <div class="stat-value"><span id="variance-value">0.00</span><span class="unit">%</span></div>
+              <div class="stat-meta">vs baseline (1.50%)</div>
+              <span class="stat-icon spark-host" aria-hidden="true">
+                <canvas id="sparkline"></canvas>
+              </span>
+            </article>
+
+            <article class="card stat-card" data-tone="threat">
+              <span class="stat-label">THREAT INDEX</span>
+              <div class="stat-value"><span id="threat-value">0.0</span><span class="unit">/ 100</span></div>
+              <div class="stat-meta" id="threat-meta">Low risk</div>
+              <span class="stat-icon" aria-hidden="true">
+                <svg viewBox="0 0 64 64" fill="none" stroke="url(#grad-warn)" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round">
+                  <path d="M32 13.5 55 51.5H9z" opacity=".95" />
+                  <path d="M32 26.5v11.5" />
+                  <circle cx="32" cy="44.6" r="1.7" fill="#e8ecff" stroke="none" />
+                </svg>
+              </span>
+            </article>
+
+            <article class="card stat-card" data-tone="integrity">
+              <span class="stat-label">INTEGRITY</span>
+              <div class="stat-value"><span id="integrity-value">100</span><span class="unit">%</span></div>
+              <div class="stat-meta" id="integrity-meta">Model stable</div>
+              <span class="stat-icon" aria-hidden="true">
+                <svg viewBox="0 0 64 64" fill="none" stroke="url(#grad-shield)" stroke-width="1.25" stroke-linejoin="round">
+                  <path d="M32 10.5 49 16v14.5C49 41.5 41.6 49.6 32 53.5 22.4 49.6 15 41.5 15 30.5V16z" />
+                  <path d="M32 16.6 43.4 20.4v10.1c0 7.6-4.9 13.7-11.4 16.8-6.5-3.1-11.4-9.2-11.4-16.8V20.4z" opacity=".35" />
+                  <circle cx="32" cy="30.4" r="4" opacity=".8" />
+                  <path d="M32 34.4v6.2" opacity=".6" />
+                </svg>
+              </span>
+            </article>
+          </div>
+
+          <!-- ── charts row ─────────────────────────────────────── -->
+          <div class="chart-row">
+            <article class="card chart-card">
+              <header class="card-head">
+                <h2>BEHAVIORAL SIGNAL</h2>
+                <span class="pill" id="live-pill"><i></i>LIVE</span>
+              </header>
+              <div class="canvas-wrap signal-wrap">
+                <canvas id="signal-chart"></canvas>
+              </div>
+            </article>
+
+            <article class="card chart-card">
+              <header class="card-head">
+                <h2>OUTPUT COMPARISON</h2>
+                <span class="legend">
+                  <span class="legend-item"><i class="dot dot-expected"></i>Expected</span>
+                  <span class="legend-item"><i class="dot dot-actual"></i>Actual</span>
+                </span>
+              </header>
+              <div class="canvas-wrap compare-wrap">
+                <canvas id="compare-chart"></canvas>
+              </div>
+            </article>
+          </div>
+
+          <!-- ── mid row ────────────────────────────────────────── -->
+          <div class="mid-row">
+            <article class="card radar-card">
+              <header class="card-head">
+                <h2>INTEGRITY RADAR</h2>
+              </header>
+              <div class="radar-body">
+                <div class="gauge-wrap">
+                  <canvas id="integrity-gauge"></canvas>
+                </div>
+                <ul class="radar-legend">
+                  <li><i class="dot dot-nominal"></i><span>Nominal</span><b id="leg-nominal">100%</b></li>
+                  <li><i class="dot dot-drift"></i><span>Drift</span><b id="leg-drift">0%</b></li>
+                  <li><i class="dot dot-quarantine"></i><span>Quarantined</span><b id="leg-quarantine">0%</b></li>
+                  <li><i class="dot dot-critical"></i><span>Critical</span><b id="leg-critical">0%</b></li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="card params-card">
+              <header class="card-head">
+                <h2>MODEL PARAMETERS</h2>
+              </header>
+              <dl class="params">
+                <div><dt>Weight</dt><dd id="param-weight">1.500</dd></div>
+                <div><dt>Status</dt><dd id="param-status">Healthy</dd></div>
+                <div><dt>Danger Level</dt><dd id="param-danger">NONE</dd></div>
+                <div><dt>Attack Name</dt><dd id="param-attack">Clean Baseline</dd></div>
+              </dl>
+              <svg class="wire-globe" viewBox="0 0 260 180" aria-hidden="true" focusable="false">
+                <g fill="none" stroke="rgba(146,138,255,0.45)" stroke-width="0.8">
+                  <circle cx="168" cy="92" r="58" />
+                  <ellipse cx="168" cy="92" rx="58" ry="20" />
+                  <ellipse cx="168" cy="92" rx="58" ry="40" opacity=".6" />
+                  <ellipse cx="168" cy="92" rx="20" ry="58" opacity=".7" />
+                  <ellipse cx="168" cy="92" rx="40" ry="58" opacity=".5" />
+                </g>
+                <g fill="rgba(200,214,255,0.85)">
+                  <circle cx="120" cy="70" r="1.4" /><circle cx="196" cy="52" r="1.2" />
+                  <circle cx="232" cy="108" r="1.6" /><circle cx="118" cy="118" r="1" />
+                </g>
+              </svg>
+            </article>
+          </div>
+
+          <!-- ── quick controls ─────────────────────────────────── -->
+          <div class="card controls-card">
+            <span class="controls-label">QUICK CONTROLS</span>
+            <div class="controls-row">
+              <button class="btn btn-restore" type="button" data-action="baseline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 12a8 8 0 1 1-2.6-5.9" /><path d="M20 4v4.6h-4.6" />
+                </svg>
+                Restore Baseline
+              </button>
+              <button class="btn btn-blue" type="button" data-action="low">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5 18.5 12 8 18.5z" fill="currentColor" opacity=".85" /></svg>
+                Run Low
+              </button>
+              <button class="btn btn-blue" type="button" data-action="medium">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5 18.5 12 8 18.5z" fill="currentColor" opacity=".85" /></svg>
+                Run Medium
+              </button>
+              <button class="btn btn-amber" type="button" data-action="high">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5 18.5 12 8 18.5z" fill="currentColor" opacity=".85" /></svg>
+                Run High
+              </button>
+              <button class="btn btn-red" type="button" data-action="critical">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5 18.5 12 8 18.5z" fill="currentColor" opacity=".85" /></svg>
+                Run Critical
+              </button>
+              <button class="btn btn-neutral" type="button" data-action="pause" id="pause-btn">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="5.5" width="3.4" height="13" rx="1" fill="currentColor" /><rect x="13.6" y="5.5" width="3.4" height="13" rx="1" fill="currentColor" /></svg>
+                <span id="pause-label">Pause Monitoring</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <aside class="card jelly-card">
+          <header class="jelly-head">
+            <h2>JELLYFISH NETWORK</h2>
+            <span>MODEL FLOW</span>
+          </header>
+          <div class="jelly-visual" aria-hidden="true">
+            <span class="jelly-haze"></span>
+            <svg viewBox="0 0 220 180" class="jelly-svg">
+              <ellipse cx="110" cy="86" rx="88" ry="30" fill="none" stroke="rgba(160,150,255,0.35)" stroke-width="0.8" transform="rotate(-16 110 86)" />
+              <ellipse cx="110" cy="86" rx="88" ry="30" fill="none" stroke="rgba(160,150,255,0.22)" stroke-width="0.8" transform="rotate(22 110 86)" />
+              <ellipse cx="110" cy="86" rx="72" ry="24" fill="none" stroke="rgba(130,180,255,0.28)" stroke-width="0.7" transform="rotate(-42 110 86)" />
+              <circle cx="110" cy="86" r="46" fill="url(#grad-jelly)" />
+              <circle cx="110" cy="86" r="46" fill="none" stroke="rgba(200,196,255,0.55)" stroke-width="0.9" />
+              <path d="M74 62c14 10 58 10 72 0" fill="none" stroke="rgba(226,222,255,0.5)" stroke-width="0.8" />
+              <path d="M70 88c16 12 64 12 80 0" fill="none" stroke="rgba(226,222,255,0.32)" stroke-width="0.8" />
+              <g fill="#dfe6ff">
+                <circle cx="196" cy="60" r="1.7" /><circle cx="28" cy="112" r="1.5" />
+                <circle cx="168" cy="140" r="1.4" /><circle cx="52" cy="52" r="1.3" />
+              </g>
+            </svg>
+          </div>
+          <div class="jelly-count"><b>4</b> ACTIVE</div>
+          <ul class="jelly-list">
+            <li><i class="dot dot-sensor"></i>SENSOR</li>
+            <li><i class="dot dot-analytics"></i>ANALYTICS</li>
+            <li><i class="dot dot-detection"></i>DETECTION</li>
+            <li><i class="dot dot-containment"></i>CONTAINMENT</li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ══ PANEL 1: THREAT LAB ══════════════════════════════ -->
+    <div class="view-panel" data-panel="THREAT LAB" style="display:none">
+      <div class="panel-content">
+        <div class="panel-header">
+          <h2 class="panel-title">⚡ THREAT LAB</h2>
+          <p class="panel-sub">Simulate adversarial attacks on the live PyTorch model. Each scenario mutates weights in memory — the ABYSS charts react in real time.</p>
+        </div>
+        <div class="tl-grid">
+          <article class="card tl-card tl-baseline">
+            <div class="tl-badge tl-badge-ok">SAFE</div>
+            <h3>Restore Baseline</h3>
+            <p>Reload clean golden weights from disk. All drift is cleared from memory immediately.</p>
+            <button class="btn btn-restore tl-btn" type="button" data-action="baseline">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.6-5.9" /><path d="M20 4v4.6h-4.6" /></svg>
+              Restore Clean Model
+            </button>
+          </article>
+          <article class="card tl-card">
+            <div class="tl-badge tl-badge-low">LOW</div>
+            <h3>Stealth Gradient Drift</h3>
+            <p>Applies subtle weight perturbations that accumulate below detection threshold. Simulates a slow-burn adversarial attack.</p>
+            <button class="btn btn-blue tl-btn" type="button" data-action="low">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5 18.5 12 8 18.5z" fill="currentColor" opacity=".85" /></svg>
+              Launch LOW Attack
+            </button>
+          </article>
+          <article class="card tl-card">
+            <div class="tl-badge tl-badge-med">MEDIUM</div>
+            <h3>Targeted Parameter Perturbation</h3>
+            <p>Perturbs specific weight tensors. Behavioural outputs deviate noticeably; canary probes flag the anomaly.</p>
+            <button class="btn btn-blue tl-btn" type="button" data-action="medium">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5 18.5 12 8 18.5z" fill="currentColor" opacity=".85" /></svg>
+              Launch MEDIUM Attack
+            </button>
+          </article>
+          <article class="card tl-card">
+            <div class="tl-badge tl-badge-high">HIGH</div>
+            <h3>Memory Integrity Violation</h3>
+            <p>Bit-flip injection into model tensors. Model enters QUARANTINE state; inference is blocked by the containment layer.</p>
+            <button class="btn btn-amber tl-btn" type="button" data-action="high">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5 18.5 12 8 18.5z" fill="currentColor" opacity=".85" /></svg>
+              Launch HIGH Attack
+            </button>
+          </article>
+          <article class="card tl-card">
+            <div class="tl-badge tl-badge-crit">CRITICAL</div>
+            <h3>Catastrophic Model Corruption</h3>
+            <p>Combines disk tampering and in-memory bit-flips. Maximum drift, isolation enforced. Triggers cloud attestation failure.</p>
+            <button class="btn btn-red tl-btn" type="button" data-action="critical">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5 18.5 12 8 18.5z" fill="currentColor" opacity=".85" /></svg>
+              Launch CRITICAL Attack
+            </button>
+          </article>
+          <article class="card tl-card tl-pause">
+            <div class="tl-badge tl-badge-muted">CONTROL</div>
+            <h3>Pause / Resume Monitoring</h3>
+            <p>Freeze the live animation and polling loop without stopping the server.</p>
+            <button class="btn btn-neutral tl-btn" type="button" data-action="pause" id="pause-btn-2">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="5.5" width="3.4" height="13" rx="1" fill="currentColor" /><rect x="13.6" y="5.5" width="3.4" height="13" rx="1" fill="currentColor" /></svg>
+              <span id="pause-label-2">Pause Monitoring</span>
+            </button>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PANEL 2: OBSERVATORY ═════════════════════════════ -->
+    <div class="view-panel" data-panel="OBSERVATORY" style="display:none">
+      <div class="panel-content">
+        <div class="panel-header">
+          <h2 class="panel-title">🔭 OBSERVATORY</h2>
+          <p class="panel-sub">Per-probe canary analysis — expected vs actual embeddings from the live PyTorch model. Updated every 2.5 seconds.</p>
+        </div>
+        <div class="obs-summary-row">
+          <div class="card obs-kpi">
+            <span class="obs-kpi-label">MAX DRIFT</span>
+            <div class="obs-kpi-value" id="obs-max-drift">0.0000%</div>
+          </div>
+          <div class="card obs-kpi">
+            <span class="obs-kpi-label">CANARY CHECK</span>
+            <div class="obs-kpi-value"><span id="obs-passed" class="obs-badge obs-ok">PASS</span></div>
+          </div>
+          <div class="card obs-kpi">
+            <span class="obs-kpi-label">ENGINE</span>
+            <div class="obs-kpi-value" style="font-size:13px;letter-spacing:.06em;">PyTorch · Real Model</div>
+          </div>
+        </div>
+        <div class="card obs-table-card">
+          <header class="card-head">
+            <h2>CANARY PROBE RESULTS</h2>
+            <span class="obs-legend">
+              <span class="obs-dot obs-dot-ok"></span>Clean
+              <span class="obs-dot obs-dot-warn"></span>Drift
+              <span class="obs-dot obs-dot-crit"></span>Critical
+            </span>
+          </header>
+          <div class="obs-scroll">
+            <table class="obs-table">
+              <thead>
+                <tr>
+                  <th>Probe</th>
+                  <th>Expected (class 0 / 1 %)</th>
+                  <th>Observed (class 0 / 1 %)</th>
+                  <th>Drift %</th>
+                </tr>
+              </thead>
+              <tbody id="obs-canary-body">
+                <tr><td colspan="4" class="obs-loading">Waiting for first status poll…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card obs-info-card">
+          <header class="card-head"><h2>HOW IT WORKS</h2></header>
+          <div class="obs-info-body">
+            <p>Five canary inputs are stored in <code>models/baseline.json</code> at training time. On every status poll, the live <code>EdgeExtractor</code> model runs these inputs and its outputs are compared to the stored embeddings.</p>
+            <p>Drift is computed as <code>‖actual − expected‖ / ‖expected‖</code> per probe. If <strong>max_drift &gt; 0.10</strong> (threshold configurable in <code>config.py</code>), the system enters <strong>QUARANTINE</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PANEL 3: BLACK BOX ═══════════════════════════════ -->
+    <div class="view-panel" data-panel="BLACK BOX" style="display:none">
+      <div class="panel-content">
+        <div class="panel-header">
+          <h2 class="panel-title">◾ BLACK BOX · FORENSICS &amp; SCANNER</h2>
+          <p class="panel-sub">Static bytecode inspection (Layer 1) &amp; tamper-evident audit trail. Inspect serialized model weights without execution.</p>
+        </div>
+
+        <!-- ── LAYER 1: STATIC BYTECODE SCANNER ── -->
+        <div class="scanner-grid">
+          <article class="card scanner-card">
+            <header class="card-head">
+              <h2>MODEL SAMPLE INSPECTOR</h2>
+              <span class="obs-badge obs-ok" id="bb-scanner-badge">READY</span>
+            </header>
+            <p class="scanner-desc">Select a model file in <code>samples/</code> to perform a safe two-pass static bytecode inspection. Analyzes pickle opcodes (<code>GLOBAL</code>, <code>REDUCE</code>, <code>BUILD</code>) to detect arbitrary code execution payloads.</p>
+            <div class="scanner-controls">
+              <label for="bb-sample-select" class="stat-label">SAMPLE VAULT</label>
+              <select id="bb-sample-select" class="scanner-select">
+                <option value="">Loading samples…</option>
+              </select>
+              <button class="btn btn-blue scanner-btn" id="bb-scan-btn" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:16px;height:16px;margin-right:6px;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                Inspect Sample
+              </button>
+            </div>
+          </article>
+
+          <article class="card scanner-card scanner-report-card">
+            <header class="card-head">
+              <h2>INSPECTION REPORT</h2>
+              <span id="bb-verdict-badge" class="verdict-pill">AWAITING SCAN</span>
+            </header>
+            <div id="bb-scan-output" class="scanner-output">
+              <p class="scanner-placeholder">Select a model file and click <b>Inspect Sample</b> to analyze bytecode structure and identify security risks.</p>
+            </div>
+          </article>
+        </div>
+
+        <!-- ── FORENSIC AUDIT LOG ── -->
+        <div class="bb-toolbar" style="margin-top: 18px;">
+          <div class="bb-search-wrap">
+            <input type="text" id="bb-log-search" class="bb-search-input" placeholder="Filter events by keyword or severity…" />
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-restore" id="bb-refresh-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;margin-right:4px;"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v4.6h-4.6"/></svg>
+              Refresh
+            </button>
+            <button class="btn btn-restore" id="bb-export-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;margin-right:4px;"><path d="M12 16V4m0 12-4-4m4 4 4-4"/><rect x="4" y="18" width="16" height="2" rx="1"/></svg>
+              Export JSON
+            </button>
+          </div>
+        </div>
+        <div class="card bb-table-card">
+          <div class="bb-scroll">
+            <table class="bb-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Event</th>
+                  <th>Status</th>
+                  <th>Severity</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody id="bb-log-body">
+                <tr><td colspan="5" class="obs-loading">Loading audit log…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card obs-info-card">
+          <header class="card-head"><h2>AUDIT INTEGRITY</h2></header>
+          <div class="obs-info-body">
+            <p>Log entries are stored in an in-process ring buffer (last 300 events). Export to JSON for offline forensic analysis or regulatory review.</p>
+            <p>Events include: <code>STARTUP</code>, <code>REAL_ATTACK_APPLIED</code>, <code>BASELINE_RESTORED</code>, <code>SCAN_COMPLETE</code>, <code>CLOUD_ATTESTATION</code>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/background.js?v=4" defer></script>
+<script src="js/charts.js?v=4" defer></script>
+<script src="js/app.js?v=4" defer></script>
+</body>
+</html>

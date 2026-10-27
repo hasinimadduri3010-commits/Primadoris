@@ -1,0 +1,11 @@
+{
+  "weight": 1.5,
+  "status": "HEALTHY",
+  "danger_level": "NOMINAL",
+  "attack_name": null,
+  "variance_pct": 0.0,
+  "threat_pct": 0.0,
+  "severity": "LOW",
+  "last_check": "2026-10-27T04:44:22",
+  "baseline_weight": 1.5
+}

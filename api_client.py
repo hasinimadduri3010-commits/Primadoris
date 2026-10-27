@@ -1,4 +1,4 @@
-"""API client for the Primadoris / SentinelEdge AI dashboard.
+"""API client for the Primadoris / Primadoris AI dashboard.
 
 This module is the ONLY way the dashboard talks to the Edge and Cloud backends.
 When ``USE_MOCK = True``, all calls are served by a realistic in-memory simulation.
@@ -446,10 +446,12 @@ def reset_node() -> Dict[str, Any]:
             )
             return _build_mock_status(step_drift=False)
 
-        data = _safe_request("POST", f"{config.EDGE_URL}/reset")
+        data = _safe_request("POST", f"{config.EDGE_URL}/attack/reset")
+        if isinstance(data, dict) and "error" in data and "404" in str(data["error"]):
+            data = _safe_request("POST", f"{config.EDGE_URL}/reset")
         if isinstance(data, dict):
             return data
-        return {"error": "Unexpected response format from edge /reset"}
+        return {"error": "Unexpected response format from edge reset endpoint"}
     except Exception as exc:
         return {"error": str(exc)}
 
@@ -612,7 +614,7 @@ def run_inference(sample_index: int) -> Dict[str, Any]:
 """
 api_client.py
 =============
-Client library for SentinelEdge AI dashboard per ARCHITECTURE.md.
+Client library for Primadoris AI dashboard per ARCHITECTURE.md.
 Connects the Streamlit UI to:
   - Cloud Server (FastAPI, Port 8000)
   - Edge Agent (FastAPI, Port 8001)
@@ -638,7 +640,7 @@ def _log_wire_exchange(method: str, url: str, req_body: Optional[Any], status_co
     lines = []
     lines.append(f">>> [{ts}] HTTP REQUEST: {method.upper()} {url}")
     lines.append(f"    Host: {url.split('/')[2]}")
-    lines.append("    User-Agent: SentinelEdge-Dashboard/1.0 (Streamlit Port 8501)")
+    lines.append("    User-Agent: Primadoris-Dashboard/1.0 (Streamlit Port 8501)")
     lines.append("    Accept: application/json")
     if req_body is not None:
         lines.append("    Content-Type: application/json")

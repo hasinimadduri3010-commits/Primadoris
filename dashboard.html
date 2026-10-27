@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#050817">
+<title>PRIMADORIS v1.0</title>
+<style>
+:root{
+  --bg:#050817;--panel:rgba(10,20,45,.82);--line:#183d65;
+  --cyan:#68efff;--blue:#528bff;--violet:#b88aff;
+  --pink:#ff65d8;--green:#6bffce;--yellow:#ffd477;
+  --red:#ff648d;--text:#e7f4ff;--muted:#7d9ab9;
+  --mono:Consolas,"Courier New",monospace;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:radial-gradient(ellipse at 53% -12%,#17265b 0,transparent 45%),
+  radial-gradient(ellipse at 98% 35%,#241044 0,transparent 32%),
+  linear-gradient(145deg,#030611,#071025 60%,#050716);
+  color:var(--text);font:13px "Segoe UI",Arial,sans-serif;min-height:100vh
+}
+button,input,select{font:inherit}
+button{cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible{
+  outline:2px solid var(--cyan);outline-offset:3px
+}
+a{color:var(--cyan)}
+header{
+  height:82px;display:flex;align-items:center;justify-content:space-between;
+  padding:12px 25px;border-bottom:1px solid #1b3457;
+  background:#050817e8;position:sticky;top:0;z-index:5;
+  backdrop-filter:blur(18px)
+}
+.brand{display:flex;align-items:center;gap:12px}
+.emblem{
+  width:45px;height:45px;border:1px solid var(--cyan);border-radius:50%;
+  display:grid;place-items:center;font-size:24px;color:var(--cyan);
+  box-shadow:0 0 18px #45dfff33
+}
+.brand h1{
+  margin:0;font-size:19px;letter-spacing:5px;
+  background:linear-gradient(90deg,#fff,var(--cyan),var(--pink));
+  color:transparent;background-clip:text
+}
+.brand small{color:var(--cyan);letter-spacing:2px;font:10px var(--mono)}
+.header-right{display:flex;align-items:center;gap:16px}
+.pill{
+  border:1px solid #27634e;color:var(--green);padding:8px 12px;
+  border-radius:20px;font:10px var(--mono);white-space:nowrap
+}
+.pill::before{content:"● ";animation:blink 1.5s infinite}
+.pill.warn{color:var(--yellow);border-color:#86652a}
+.pill.danger{color:var(--red);border-color:#943652}
+#clock{color:var(--muted);font:11px var(--mono)}
+.layout{display:grid;grid-template-columns:205px minmax(0,1fr);min-height:calc(100vh - 82px)}
+aside{padding:19px 12px;border-right:1px solid #18304e;background:#040916d9}
+.side-brand{font:10px var(--mono);color:var(--muted);letter-spacing:2px;padding:7px 12px 18px}
+.nav{display:flex;flex-direction:column;gap:7px}
+.nav button{
+  background:transparent;border:1px solid transparent;border-radius:8px;
+  padding:13px 12px;text-align:left;color:#94b2d4;
+  display:flex;gap:10px;align-items:center
+}
+.nav button .ico{font-size:19px;width:23px;text-align:center}
+.nav button.active,.nav button:hover{
+  background:linear-gradient(90deg,#153a5d99,#39205b55);
+  border-color:#2774a4;color:#eafaff;box-shadow:inset 3px 0 var(--cyan)
+}
+.side-note{
+  margin:35px 10px 0;padding-top:18px;border-top:1px solid #17304a;
+  color:#7794b8;font:10px/1.8 var(--mono)
+}
+main{min-width:0;padding:23px;max-width:1600px;width:100%;margin:auto}
+.hero{
+  position:relative;overflow:hidden;text-align:center;padding:15px 10px 23px;
+  border-bottom:1px solid #19395a;margin-bottom:19px
+}
+.hero h2{
+  font-size:clamp(25px,4vw,43px);letter-spacing:9px;margin:3px 0 8px;
+  text-shadow:0 0 25px #a65fff99;
+  background:linear-gradient(90deg,#fff,var(--cyan),var(--pink));
+  color:transparent;background-clip:text
+}
+.hero p{font:10px var(--mono);letter-spacing:3px;color:#8dbbe4;margin:0}
+.hero .sub{margin-top:12px;color:var(--cyan);font-size:10px;letter-spacing:2px}
+.jelly{
+  position:absolute;right:5%;top:-22px;width:110px;height:75px;opacity:.55;
+  border-radius:50%;
+  background:radial-gradient(ellipse at 35% 30%,#fff,#b3a5ff 7%,#4d5fff 26%,#3025a0 58%,transparent 72%);
+  filter:drop-shadow(0 0 22px #6b6cff);animation:float 5s ease-in-out infinite
+}
+.jelly:after{
+  content:"";position:absolute;left:30%;top:57px;width:60px;height:62px;
+  background:repeating-linear-gradient(90deg,transparent 0 8px,#7d86ff99 9px 10px,transparent 11px 16px);
+  border-radius:50%;filter:blur(1px)
+}
+@keyframes float{50%{transform:translateY(12px) rotate(4deg)}}
+@keyframes blink{50%{opacity:.35}}
+@keyframes pulse{50%{box-shadow:0 0 24px #ff527744}}
+.page{display:none;animation:appear .25s ease}
+.page.active{display:block}
+@keyframes appear{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.page-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}
+.page-title h2{font-size:16px;letter-spacing:2px;margin:0}
+.eyebrow{font:10px var(--mono);color:var(--cyan);letter-spacing:2px;margin-bottom:6px}
+.muted{color:var(--muted)}
+.small{font-size:11px}
+.grid{display:grid;gap:13px}
+.metrics{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:14px}
+.card{
+  background:linear-gradient(140deg,#0b1932e8,#090f24e8);
+  border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0;
+  box-shadow:0 8px 26px #0002;position:relative;overflow:hidden
+}
+.card:before{
+  content:"";position:absolute;top:0;left:12%;right:12%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),var(--violet),transparent)
+}
+.card:hover{border-color:#3975a3}
+.metric-label{font:10px var(--mono);color:#86a8cc;letter-spacing:1px}
+.metric{
+  font:700 clamp(21px,2.4vw,30px) var(--mono);margin:13px 0 6px;
+  color:var(--cyan);overflow-wrap:anywhere
+}
+.metric.green{color:var(--green)}
+.metric.yellow{color:var(--yellow)}
+.metric.red{color:var(--red)}
+.metric.pink{color:var(--pink)}
+.split{grid-template-columns:minmax(0,1.55fr) minmax(260px,1fr);margin-bottom:14px}
+.panel-title{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  font:11px var(--mono);letter-spacing:1px;color:#bce9ff;margin-bottom:14px
+}
+.panel-title span:last-child{color:var(--muted);font-size:10px}
+canvas{width:100%;height:220px;display:block}
+.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.btn{
+  border:1px solid #2b557c;background:#0a1a32;border-radius:6px;
+  padding:11px 12px;color:#c9e8ff;transition:.18s
+}
+.btn:hover{transform:translateY(-1px);border-color:var(--cyan);box-shadow:0 0 16px #42dfff1a}
+.btn.primary{background:linear-gradient(100deg,#164c6a,#25224f);border-color:#4296b7}
+.btn.low{border-left:3px solid var(--cyan)}
+.btn.med{border-left:3px solid var(--yellow)}
+.btn.high{border-left:3px solid #ff9c65}
+.btn.crit{border-left:3px solid var(--red)}
+.btn.reset{border-color:#367e70;color:var(--green)}
+.btn:disabled{opacity:.5;cursor:wait;transform:none}
+.banner{
+  display:none;margin-bottom:15px;border:1px solid var(--red);
+  background:#50162c66;padding:15px;border-radius:8px;animation:pulse 2s infinite
+}
+.banner.show{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.banner strong{color:var(--red)}
+.barrow{display:grid;grid-template-columns:70px 1fr 52px;gap:10px;align-items:center;margin:13px 0}
+.track{height:8px;background:#172743;border-radius:9px;overflow:hidden}
+.fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--violet),var(--pink));transition:width .3s}
+table{width:100%;border-collapse:collapse;font:11px var(--mono)}
+th,td{text-align:left;padding:12px 10px;border-bottom:1px solid #1a2c49;overflow-wrap:anywhere}
+th{color:#7da5cb;font-size:10px;letter-spacing:1px}
+td{color:#c9def4}
+.table-wrap{overflow:auto;max-width:100%}
+.status-text{font:11px var(--mono);color:var(--green)}
+.status-text.warn{color:var(--yellow)}
+.status-text.bad{color:var(--red)}
+.field{
+  width:100%;padding:11px;background:#050d20;border:1px solid #27476a;
+  border-radius:6px;color:var(--text);margin:7px 0 12px
+}
+.terminal{
+  background:#030817;border:1px solid #1d4668;border-radius:8px;padding:12px;
+  height:245px;overflow:auto;font:11px/1.8 var(--mono);
+  white-space:pre-wrap;overflow-wrap:anywhere
+}
+.probe-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+.probe{background:#07142a;border:1px solid #1d3d60;border-radius:7px;padding:12px}
+.probe h4{margin:0 0 13px;color:var(--cyan);font:11px var(--mono)}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.swatch{height:7px;border-radius:4px;margin:6px 0 10px;background:var(--cyan)}
+.swatch.actual{background:var(--pink)}
+.footer{padding:20px 0 5px;text-align:center;font:9px var(--mono);color:#557394;letter-spacing:2px}
+.toast{
+  position:fixed;bottom:20px;right:20px;background:#0c1e38;
+  border:1px solid var(--cyan);padding:13px 17px;border-radius:8px;
+  z-index:10;max-width:min(400px,90vw);display:none
+}
+.toast.show{display:block}
+@media(max-width:1000px){
+  .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .split{grid-template-columns:1fr}
+  .probe-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .jelly{right:1%;opacity:.25}
+}
+@media(max-width:680px){
+  header{padding:10px 12px;height:auto}
+  .brand h1{font-size:15px;letter-spacing:3px}
+  .brand small{font-size:8px;letter-spacing:1px}
+  .header-right{gap:7px}
+  #clock{display:none}
+  .pill{font-size:9px;padding:7px}
+  .layout{grid-template-columns:1fr}
+  aside{
+    position:sticky;top:64px;z-index:4;padding:8px;
+    border-right:0;border-bottom:1px solid var(--line)
+  }
+  .side-brand,.side-note{display:none}
+  .nav{flex-direction:row;overflow:auto}
+  .nav button{white-space:nowrap;padding:10px}
+  .nav button .ico{font-size:15px}
+  main{padding:13px}
+  .hero h2{letter-spacing:4px}
+  .hero p{letter-spacing:1px}
+  .metrics{gap:8px}
+  .card{padding:12px}
+  .metric{font-size:22px}
+  .page-title{align-items:flex-start;flex-direction:column}
+  .probe-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="emblem">◉</div>
+    <div>
+      <h1>PRIMADORIS</h1>
+      <small>PRIMADORIS // v1.0</small>
+    </div>
+  </div>
+  <div class="header-right">
+    <div id="beacon" class="pill">CONNECTING</div>
+    <div id="clock">LOCAL --:--:--</div>
+  </div>
+</header>
+
+<div class="layout">
+<aside>
+  <div class="side-brand">NEURAL INTERFACE / 04</div>
+  <nav class="nav" aria-label="Main navigation">
+    <button class="active" data-page="abyss"><span class="ico">◈</span> THE ABYSS</button>
+    <button data-page="threat"><span class="ico">⌁</span> THREAT LAB</button>
+    <button data-page="observatory"><span class="ico">⌗</span> OBSERVATORY</button>
+    <button data-page="blackbox"><span class="ico">▣</span> BLACK BOX</button>
+  </nav>
+  <div class="side-note">"Not all intelligence is safe.<br>That's why we watch."<br><br>PRIMADORIS / TRUST LAYER</div>
+</aside>
+
+<main>
+  <section class="hero">
+    <div class="jelly"></div>
+    <h2>PRIMADORIS</h2>
+    <p>AI INTEGRITY CONTAINMENT SYSTEM</p>
+    <div class="sub">OBSERVE &nbsp; / &nbsp; DETECT &nbsp; / &nbsp; CONTAIN &nbsp; / &nbsp; PRESERVE</div>
+  </section>
+
+  <div id="emergency" class="banner">
+    <div>
+      <strong>⚠ BEHAVIORAL ANOMALY DETECTED</strong>
+      <div class="small muted" id="emergencyText">Review the latest model state.</div>
+    </div>
+    <button class="btn reset" onclick="resetModel()">↻ Restore baseline</button>
+  </div>
+
+  <section id="page-abyss" class="page active">
+    <div class="page-title">
+      <div><div class="eyebrow">01 / LIVE TELEMETRY</div><h2>THE ABYSS — SYSTEM OVERVIEW</h2></div>
+      <span class="small muted">API refresh: 2.5 seconds</span>
+    </div>
+
+    <div class="grid metrics">
+      <div class="card"><div class="metric-label">MODEL STATE</div><div id="status" class="metric green">HEALTHY</div><div id="severity" class="small muted">LOW RISK</div></div>
+      <div class="card"><div class="metric-label">BEHAVIORAL VARIANCE</div><div id="variance" class="metric">0.000%</div><div class="small muted">MEAN SQUARED ERROR</div></div>
+      <div class="card"><div class="metric-label">THREAT INDEX</div><div id="threat" class="metric pink">0.0 / 100</div><div id="attackName" class="small muted">Clean baseline</div></div>
+      <div class="card"><div class="metric-label">MODEL WEIGHT</div><div id="weight" class="metric">1.500</div><div class="small muted">GOLDEN BASELINE: 1.500</div></div>
+    </div>
+
+    <div class="grid split">
+      <div class="card">
+        <div class="panel-title">BEHAVIORAL SIGNAL <span>● LIVE</span></div>
+        <canvas id="trend" aria-label="Behavioral variance and threat trend"></canvas>
+        <div class="small muted">Cyan: variance · Magenta: threat index</div>
+      </div>
+      <div class="card">
+        <div class="panel-title">QUICK CONTROLS <span>LOCAL SIMULATION</span></div>
+        <div class="actions">
+          <button class="btn low" onclick="runAttack('LOW')">◉ Run Low</button>
+          <button class="btn med" onclick="runAttack('MEDIUM')">◉ Run Medium</button>
+          <button class="btn high" onclick="runAttack('HIGH')">◉ Run High</button>
+          <button class="btn crit" onclick="runAttack('CRITICAL')">⚠ Run Critical</button>
+          <button class="btn reset" style="grid-column:span 2" onclick="resetModel()">↻ Restore baseline</button>
+        </div>
+        <p class="small muted">These buttons change the local demonstration model state. They do not attack a real model.</p>
+      </div>
+    </div>
+
+    <div class="grid split">
+      <div class="card">
+        <div class="panel-title">INTEGRITY RADAR <span>PROBE COMPARISON</span></div>
+        <div id="radar"></div>
+      </div>
+      <div class="card">
+        <div class="panel-title">MODEL PARAMETERS <span>RUNTIME</span></div>
+        <div class="barrow"><span class="muted">Weight</span><div class="track"><div id="weightBar" class="fill" style="width:30%"></div></div><span id="weightSmall">1.500</span></div>
+        <div class="barrow"><span class="muted">Threat</span><div class="track"><div id="threatBar" class="fill" style="width:0%"></div></div><span id="threatSmall">0%</span></div>
+        <div class="barrow"><span class="muted">Drift</span><div class="track"><div id="driftBar" class="fill" style="width:0%"></div></div><span id="driftSmall">0%</span></div>
+        <p class="small muted">Runtime monitoring is simulated from a five-probe baseline. No hardware attestation is performed.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="panel-title">LIVE EVENT STREAM <span id="connection">CONNECTING</span></div>
+      <div id="liveLog" class="terminal">Connecting to local API…</div>
+    </div>
+  </section>
+
+  <section id="page-threat" class="page">
+    <div class="page-title">
+      <div><div class="eyebrow">02 / CONTROLLED SCENARIOS</div><h2>THREAT LAB</h2></div>
+      <span class="small muted">Isolated local simulation</span>
+    </div>
+    <div class="grid split">
+      <div class="card">
+        <div class="panel-title">SELECT A SCENARIO <span>FOUR SEVERITIES</span></div>
+        <div class="actions">
+          <button class="btn low" onclick="runAttack('LOW')"><b>LOW</b><br><span class="small">Stealth gradient drift</span></button>
+          <button class="btn med" onclick="runAttack('MEDIUM')"><b>MEDIUM</b><br><span class="small">Parameter perturbation</span></button>
+          <button class="btn high" onclick="runAttack('HIGH')"><b>HIGH</b><br><span class="small">Integrity violation</span></button>
+          <button class="btn crit" onclick="runAttack('CRITICAL')"><b>CRITICAL</b><br><span class="small">Model corruption</span></button>
+        </div>
+        <button class="btn reset" style="width:100%;margin-top:10px" onclick="resetModel()">↻ Restore golden baseline</button>
+      </div>
+      <div class="card">
+        <div class="panel-title">SCENARIO EXPLANATION</div>
+        <p class="muted">Each scenario assigns a different test weight to the local model-state file.</p>
+        <p>LOW — small deviation from baseline.</p>
+        <p>MEDIUM — increased parameter deviation.</p>
+        <p>HIGH — large deviation intended to trigger an alert.</p>
+        <p>CRITICAL — extreme simulated deviation.</p>
+        <p class="small muted">Severity labels describe the selected test scenario, not a measured probability of a real attack.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="panel-title">LATEST DETECTION RESULT</div>
+      <div id="labResult" class="terminal">No scenario executed in this browser session.</div>
+    </div>
+  </section>
+
+  <section id="page-observatory" class="page">
+    <div class="page-title">
+      <div><div class="eyebrow">03 / INFERENCE ANALYSIS</div><h2>OBSERVATORY</h2></div>
+      <span class="small muted">Five reference probes</span>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="panel-title">BASELINE VS OBSERVED OUTPUT <span>PROBABILITY / %</span></div>
+      <div id="probeGrid" class="grid probe-grid"></div>
+    </div>
+    <div class="grid split">
+      <div class="card">
+        <div class="panel-title">VARIANCE HISTORY</div>
+        <canvas id="historyChart" aria-label="Variance history chart"></canvas>
+      </div>
+      <div class="card">
+        <div class="panel-title">HOW TO READ THE SIGNAL</div>
+        <p><span style="color:var(--green)">● HEALTHY</span> — output deviation is within the demo threshold.</p>
+        <p><span style="color:var(--yellow)">● SUSPICIOUS</span> — deviation requires review.</p>
+        <p><span style="color:var(--red)">● QUARANTINED</span> — the simulated response crosses the critical threshold.</p>
+        <p class="small muted">This is a demonstration model. Real systems need validated thresholds, representative test inputs, and a real inference engine.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="page-blackbox" class="page">
+    <div class="page-title">
+      <div><div class="eyebrow">04 / FORENSIC INSPECTION</div><h2>BLACK BOX</h2></div>
+      <span class="small muted">Local sample directory</span>
+    </div>
+    <div class="grid split">
+      <div class="card">
+        <div class="panel-title">MODEL SAMPLE SCANNER</div>
+        <label for="sampleSelect">Select a .pkl, .pt or .pth file in samples/</label>
+        <select id="sampleSelect" class="field"><option value="">Loading samples…</option></select>
+        <button class="btn primary" style="width:100%" onclick="scanSample()">⌕ Inspect sample</button>
+        <p class="small muted">The scanner inspects file structure and selected pickle opcodes. It never loads a model for execution.</p>
+      </div>
+      <div class="card">
+        <div class="panel-title">SCAN REPORT</div>
+        <div id="scanResult" class="terminal">Select a sample and run a scan.</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="panel-title">FORENSIC AUDIT TRAIL <span id="logCount">0 EVENTS</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <input id="logSearch" class="field" style="flex:1;min-width:170px;margin:0" placeholder="Filter event, status or details…" oninput="renderLogs()">
+        <button class="btn" onclick="loadLogs()">↻ Refresh logs</button>
+        <button class="btn" onclick="exportLogs()">⇩ Export JSON</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>TIME</th><th>EVENT</th><th>STATUS</th><th>SEVERITY</th><th>DETAILS</th></tr></thead>
+          <tbody id="logTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">PRIMADORIS · INTELLIGENCE THAT UNCOVERS. VIGILANCE THAT PROTECTS.</div>
+</main>
+</div>
+<div id="toast" class="toast" role="status"></div>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const state = {status:null,history:[],logs:[],probes:[],busy:false};
+const baseline = [[.95,.05],[.10,.90],[.88,.12],[.02,.98],[.50,.50]];
+let toastTimer;
+
+// Handle both HTTP server and direct file:// execution
+const API_BASE = window.location.protocol === 'file:' ? 'http://127.0.0.1:8080' : '';
+
+function notify(message){
+  const el=$("toast");
+  el.textContent=message;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove("show"),3200);
+}
+
+function esc(s){
+  return String(s??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function stamp(){return new Date().toLocaleTimeString();}
+
+async function api(path,body){
+  const options=body===undefined
+    ? {cache:"no-store"}
+    : {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(body)
+      };
+  const response=await fetch(API_BASE + path, options);
+  const data=await response.json();
+  if(!response.ok)throw new Error(data.error||"Request failed");
+  return data;
+}
+
+function setPage(name){
+  document.querySelectorAll(".page").forEach(p=>
+    p.classList.toggle("active",p.id==="page-"+name)
+  );
+  document.querySelectorAll(".nav button").forEach(b=>
+    b.classList.toggle("active",b.dataset.page===name)
+  );
+  if(name==="blackbox"){loadSamples();loadLogs();}
+  if(name==="observatory")drawHistory();
+}
+
+document.querySelectorAll(".nav button").forEach(b=>
+  b.addEventListener("click",()=>setPage(b.dataset.page))
+);
+
+function statusClass(s){
+  if(["QUARANTINED","TAMPERED","CRITICAL","COMPROMISED"].includes(s))return "red";
+  if(["SUSPICIOUS","MEDIUM"].includes(s))return "yellow";
+  return "green";
+}
+
+function updateStatus(d){
+  state.status=d;
+  state.probes=d.observed_matrix||[];
+
+  $("status").textContent=d.status||"UNKNOWN";
+  $("status").className="metric "+statusClass(d.status);
+  $("severity").textContent="SEVERITY: "+(d.severity||"UNKNOWN");
+  $("variance").textContent=Number(d.variance_pct||0).toFixed(4)+"%";
+  $("threat").textContent=Number(d.threat_pct||0).toFixed(1)+" / 100";
+  $("weight").textContent=Number(d.weight||1.5).toFixed(3);
+  $("attackName").textContent=d.attack_name||"Clean baseline";
+
+  $("beacon").textContent=d.status==="HEALTHY"?"SYSTEM NOMINAL":d.status;
+  $("beacon").className="pill "+(
+    ["QUARANTINED","COMPROMISED","TAMPERED"].includes(d.status)
+      ?"danger":d.status==="SUSPICIOUS"?"warn":""
+  );
+
+  $("emergency").classList.toggle(
+    "show",["QUARANTINED","COMPROMISED","TAMPERED"].includes(d.status)
+  );
+  $("emergencyText").textContent=
+    `Variance ${Number(d.variance_pct||0).toFixed(3)}%; threat ${Number(d.threat_pct||0).toFixed(1)}%.`;
+
+  $("weightBar").style.width=Math.min(100,Number(d.weight||1.5)/5*100)+"%";
+  $("threatBar").style.width=Math.min(100,Number(d.threat_pct||0))+"%";
+  $("driftBar").style.width=Math.min(100,Number(d.variance_pct||0)*5)+"%";
+
+  $("weightSmall").textContent=Number(d.weight||1.5).toFixed(3);
+  $("threatSmall").textContent=Number(d.threat_pct||0).toFixed(1)+"%";
+  $("driftSmall").textContent=Number(d.variance_pct||0).toFixed(3)+"%";
+  $("connection").textContent="API CONNECTED · "+stamp();
+
+  renderRadar(d);
+  renderProbes(d);
+  drawTrend();
+}
+
+function renderRadar(d){
+  const vals=[
+    ["Nominal",d.status==="HEALTHY"?100:0,"var(--green)"],
+    ["Review",d.status==="SUSPICIOUS"?100:0,"var(--yellow)"],
+    ["Containment",["QUARANTINED","COMPROMISED","TAMPERED"].includes(d.status)?100:0,"var(--red)"]
+  ];
+  $("radar").innerHTML=vals.map(([label,v,color])=>
+    `<div class="barrow">
+      <span>${label}</span>
+      <div class="track"><div class="fill" style="width:${v}%;background:${color}"></div></div>
+      <span>${v}%</span>
+    </div>`
+  ).join("");
+}
+
+function renderProbes(d){
+  const observed=d.observed_matrix||baseline;
+  $("probeGrid").innerHTML=baseline.map((b,i)=>{
+    const o=observed[i]||b;
+    const delta=(Math.abs(o[0]-b[0])*100).toFixed(1);
+    return `<div class="probe">
+      <h4>PROBE 0${i+1}</h4>
+      <div class="comparison">
+        <div class="small">EXPECTED
+          <div class="swatch"></div>
+          <span>${(b[0]*100).toFixed(1)} / ${(b[1]*100).toFixed(1)}</span>
+        </div>
+        <div class="small">OBSERVED
+          <div class="swatch actual"></div>
+          <span>${(o[0]*100).toFixed(1)} / ${(o[1]*100).toFixed(1)}</span>
+        </div>
+      </div>
+      <div class="small muted">Output delta: ${delta}%</div>
+    </div>`;
+  }).join("");
+}
+
+function drawCanvas(id,series,maxValue){
+  const canvas=$(id);
+  if(!canvas)return;
+  const rect=canvas.getBoundingClientRect();
+  if(!rect.width)return;
+
+  const ratio=window.devicePixelRatio||1;
+  canvas.width=rect.width*ratio;
+  canvas.height=220*ratio;
+
+  const ctx=canvas.getContext("2d");
+  ctx.scale(ratio,ratio);
+
+  const w=rect.width,h=220,pad=28;
+  ctx.clearRect(0,0,w,h);
+  ctx.font="10px Consolas";
+  ctx.fillStyle="#7698bc";
+  ctx.strokeStyle="#18304b";
+
+  for(let i=0;i<=4;i++){
+    const y=pad+(h-pad*1.5)*i/4;
+    ctx.beginPath();
+    ctx.moveTo(pad,y);
+    ctx.lineTo(w-8,y);
+    ctx.stroke();
+    ctx.fillText((maxValue*(1-i/4)).toFixed(0),2,y+3);
+  }
+
+  series.forEach(s=>{
+    if(!s.values.length)return;
+    ctx.beginPath();
+    ctx.strokeStyle=s.color;
+    ctx.lineWidth=2;
+
+    s.values.forEach((v,i)=>{
+      const x=pad+(w-pad-12)*i/Math.max(1,s.values.length-1);
+      const y=h-pad-(h-pad*1.5)*Math.max(0,Math.min(maxValue,v))/maxValue;
+      if(i===0)ctx.moveTo(x,y);
+      else ctx.lineTo(x,y);
+    });
+
+    ctx.shadowBlur=8;
+    ctx.shadowColor=s.color;
+    ctx.stroke();
+    ctx.shadowBlur=0;
+  });
+}
+
+function drawTrend(){
+  const hist=state.history.slice(-40);
+  const current=state.status;
+  const vars=hist.map(x=>Number(x.variance_pct)||0);
+  const threats=hist.map(x=>Number(x.threat_pct)||0);
+
+  if(current){
+    vars.push(Number(current.variance_pct)||0);
+    threats.push(Number(current.threat_pct)||0);
+  }
+
+  drawCanvas("trend",[
+    {values:vars,color:"#68efff"},
+    {values:threats,color:"#ff65d8"}
+  ],100);
+}
+
+function drawHistory(){
+  drawCanvas("historyChart",[
+    {values:state.history.slice(-40).map(x=>Number(x.variance_pct)||0),color:"#68efff"}
+  ],100);
+}
+
+function addLive(message){
+  const box=$("liveLog");
+  const line=`[${stamp()}] ${message}`;
+  box.textContent=(box.textContent+"\n"+line).split("\n").slice(-45).join("\n");
+  box.scrollTop=box.scrollHeight;
+}
+
+async function refresh(){
+  try{
+    const [d,h]=await Promise.all([
+      api("/api/status"),
+      api("/api/history")
+    ]);
+    state.history=h.history||[];
+    updateStatus(d);
+  }catch(e){
+    $("beacon").textContent="API OFFLINE";
+    $("beacon").className="pill danger";
+    $("connection").textContent="CONNECTION ERROR";
+    addLive(e.message);
+  }
+}
+
+async function runAttack(level){
+  if(state.busy)return;
+  state.busy=true;
+
+  try{
+    const d=await api("/api/attack",{level});
+    addLive(`SIMULATION ${d.level}: ${d.attack_name}; weight ${d.weight}`);
+    $("labResult").textContent=JSON.stringify(d,null,2);
+    notify(`${level} simulation applied`);
+    await refresh();
+    await loadLogs();
+  }catch(e){
+    notify("Attack request failed: "+e.message);
+  }finally{
+    state.busy=false;
+  }
+}
+
+async function resetModel(){
+  if(state.busy)return;
+  state.busy=true;
+
+  try{
+    const d=await api("/api/reset");
+    addLive("Golden baseline restored: 1.500");
+    $("labResult").textContent=JSON.stringify(d,null,2);
+    notify("Baseline restored");
+    await refresh();
+    await loadLogs();
+  }catch(e){
+    notify("Reset failed: "+e.message);
+  }finally{
+    state.busy=false;
+  }
+}
+
+async function loadLogs(){
+  try{
+    const d=await api("/api/logs");
+    state.logs=d.logs||[];
+    renderLogs();
+  }catch(e){
+    notify("Could not load audit events: "+e.message);
+  }
+}
+
+function renderLogs(){
+  const q=$("logSearch").value.toLowerCase();
+  const rows=state.logs.filter(x=>JSON.stringify(x).toLowerCase().includes(q));
+
+  $("logCount").textContent=rows.length+" EVENTS";
+  $("logTable").innerHTML=rows.map(x=>`<tr>
+    <td>${esc(x.timestamp)}</td>
+    <td>${esc(x.event)}</td>
+    <td>${esc(x.status)}</td>
+    <td>${esc(x.severity)}</td>
+    <td>${esc(x.details)}</td>
+  </tr>`).join("")||'<tr><td colspan="5">No matching events.</td></tr>';
+}
+
+async function loadSamples(){
+  try{
+    const d=await api("/api/samples");
+    $("sampleSelect").innerHTML=d.samples.length
+      ?d.samples.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("")
+      :'<option value="">No samples found in samples/</option>';
+  }catch(e){
+    $("sampleSelect").innerHTML='<option value="">Could not load samples</option>';
+  }
+}
+
+async function scanSample(){
+  const file=$("sampleSelect").value;
+  if(!file)return notify("Add a sample file to the samples folder first.");
+
+  try{
+    const d=await api("/api/scan",{file});
+    $("scanResult").textContent=JSON.stringify(d,null,2);
+    notify("Inspection finished: "+d.verdict);
+    await loadLogs();
+  }catch(e){
+    $("scanResult").textContent=e.message;
+    notify("Scan failed");
+  }
+}
+
+function exportLogs(){
+  const blob=new Blob([JSON.stringify(state.logs,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="primadoris-audit.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function tickClock(){
+  $("clock").textContent="LOCAL "+new Date().toLocaleTimeString();
+}
+
+window.addEventListener("resize",()=>{
+  drawTrend();
+  drawHistory();
+});
+
+tickClock();
+setInterval(tickClock,1000);
+refresh();
+loadLogs();
+loadSamples();
+setInterval(refresh,2500);
+setInterval(loadLogs,5000);
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-"""SentinelEdge AI - Zero-Trust Command Center (Streamlit Dashboard).
+"""Primadoris AI - Zero-Trust Command Center (Streamlit Dashboard).
 
 Communicates with the Edge and Cloud backends exclusively via ``api_client``.
 """
@@ -26,7 +26,7 @@ import config
 # ---------------------------------------------------------------------------
 
 st.set_page_config(
-    page_title="SentinelEdge AI - Zero-Trust Command Center",
+    page_title="Primadoris AI - Zero-Trust Command Center",
     page_icon="🛡️",
     layout="wide",
 )
@@ -632,7 +632,7 @@ def run_layer1_scan(temp_path: str, raw_bytes: bytes) -> Dict[str, Any]:
 # Header & Sidebar
 # ---------------------------------------------------------------------------
 
-st.title("🛡️ SentinelEdge AI - Zero-Trust Command Center")
+st.title("🛡️ Primadoris AI - Zero-Trust Command Center")
 
 with st.sidebar:
     st.header("⚙️ Telemetry & Backend Mode")
@@ -1008,13 +1008,13 @@ else:
     try:
         from streamlit_autorefresh import st_autorefresh  # type: ignore
 
-        st_autorefresh(interval=2000, key="sentinel_autorefresh")
+        st_autorefresh(interval=2000, key="primadoris_autorefresh")
     except Exception:
         pass
     _live_header_and_command_center_impl()
 
 """
-PRIMADORIS • SentinelEdge AI — Layer 1 Deep Bytecode Inspector
+PRIMADORIS • Primadoris AI — Layer 1 Deep Bytecode Inspector
 ==============================================================
 Dark Web AI Model Supply Chain Defense & Zero-Execution Security Sandbox
 Includes: Interactive Hackathon Judge Mode / Under the Hood Transparency
@@ -1039,7 +1039,7 @@ from scanner import scan_file, scan_bytes, DANGEROUS_MODULES_HIGH, DANGEROUS_MOD
 # 1. STREAMLIT CONFIGURATION & PRIMADORIS DARK WEB CYBER AESTHETIC
 # =====================================================================
 st.set_page_config(
-    page_title="PRIMADORIS • SentinelEdge AI",
+    page_title="PRIMADORIS • Primadoris AI",
     page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -1408,7 +1408,7 @@ st.markdown(f"""
 <div class="primadoris-header">
     <div class="brand-title">
         <span>🛡️ PRIMADORIS</span>
-        <span class="brand-pill-darkweb">SENTINELEDGE AI</span>
+        <span class="brand-pill-darkweb">PRIMADORIS AI</span>
         <span class="brand-pill-darkweb">LAYER 1 INSPECTOR</span>
         {'<span class="brand-pill-judge">👁️ JUDGE MODE ON</span>' if judge_mode else ''}
     </div>

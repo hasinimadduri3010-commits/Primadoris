@@ -1,4 +1,4 @@
-"""SentinelEdge AI - Zero-Trust Command Center (Streamlit Dashboard).
+"""Primadoris AI - Zero-Trust Command Center (Streamlit Dashboard).
 
 Communicates with the Edge and Cloud backends exclusively via ``api_client``.
 """
@@ -26,7 +26,7 @@ import config
 # ---------------------------------------------------------------------------
 
 st.set_page_config(
-    page_title="SentinelEdge AI - Zero-Trust Command Center",
+    page_title="Primadoris AI - Zero-Trust Command Center",
     page_icon="🛡️",
     layout="wide",
 )
@@ -632,7 +632,7 @@ def run_layer1_scan(temp_path: str, raw_bytes: bytes) -> Dict[str, Any]:
 # Header & Sidebar
 # ---------------------------------------------------------------------------
 
-st.title("🛡️ SentinelEdge AI - Zero-Trust Command Center")
+st.title("🛡️ Primadoris AI - Zero-Trust Command Center")
 
 with st.sidebar:
     st.header("⚙️ Telemetry & Backend Mode")
@@ -1008,7 +1008,7 @@ else:
     try:
         from streamlit_autorefresh import st_autorefresh  # type: ignore
 
-        st_autorefresh(interval=2000, key="sentinel_autorefresh")
+        st_autorefresh(interval=2000, key="primadoris_autorefresh")
     except Exception:
         pass
     _live_header_and_command_center_impl()

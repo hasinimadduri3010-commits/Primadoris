@@ -1,7 +1,7 @@
 """
 test_scanner.py
 ===============
-Test suite for SentinelEdge AI Layer 1 Bytecode Scanner (scanner.py).
+Test suite for Primadoris AI Layer 1 Bytecode Scanner (scanner.py).
 Verifies:
   1. Exact dictionary structure compliance per ARCHITECTURE.md.
   2. Safe model detection (verdict == 'SAFE').
@@ -126,7 +126,7 @@ def test_missing_file():
 def run_all_tests():
     """Main execution entry point."""
     print("=" * 60)
-    print("Running SentinelEdge AI Scanner Tests (test_scanner.py)")
+    print("Running Primadoris AI Scanner Tests (test_scanner.py)")
     print("=" * 60)
 
     # Ensure test files exist

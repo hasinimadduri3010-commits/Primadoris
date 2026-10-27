@@ -1,7 +1,7 @@
 """
 make_test_files.py
 ===================
-Generates test pickle (.pkl) files for the SentinelEdge AI Bytecode Scanner:
+Generates test pickle (.pkl) files for the Primadoris AI Bytecode Scanner:
 1. safe_model.pkl: Normal serialized Python dictionary representing model weights.
 2. malicious_model.pkl: Uses __reduce__ to request builtins.eval (eval payload trick)
    to simulate arbitrary code execution without triggering OS filter blocks.

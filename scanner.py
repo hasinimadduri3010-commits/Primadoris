@@ -1,7 +1,7 @@
 """
 scanner.py
 ==========
-SentinelEdge AI - Layer 1 Static Bytecode Scanner
+Primadoris AI - Layer 1 Static Bytecode Scanner
 Implements scan_file(path: str) -> dict according to ARCHITECTURE.md.
 
 Performs two-pass static bytecode analysis on .pkl files without unpickling
